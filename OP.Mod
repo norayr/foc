@@ -1,11 +1,12 @@
 MODULE OP; (*N. Wirth 1.7.97 / 7.6.2014  Oberon compiler for RISC in Oberon-07*)
+           (* N. Chilingarian 2015, GNU+Linux/x86 port*)
   IMPORT Texts := CompatTexts, Oberon, ORS := OS, ORB := OB, ORG := OG;
   (*Author: Niklaus Wirth, 2014.
     Parser of Oberon-RISC compiler. Uses Scanner ORS to obtain symbols (tokens),
     ORB for definition of data structures and for handling import and export, and
     ORG to produce binary code. ORP performs type checking and data allocation.
     Parser is target-independent, except for part of the handling of allocations.*)
-
+   (* Modifications by noch - Norayr Chilingarian, 2015 *)
   TYPE INTEGER = LONGINT; (* voc adaptation by noch *)
 
   TYPE PtrBase = POINTER TO PtrBaseDesc;
@@ -17,6 +18,7 @@ MODULE OP; (*N. Wirth 1.7.97 / 7.6.2014  Oberon compiler for RISC in Oberon-07*)
     dc: LONGINT;    (*data counter*)
     level, exno, version: INTEGER;
     newSF: BOOLEAN;  (*option flag*)
+	main: BOOLEAN; (* for systems with main entry point *)
     expression: PROCEDURE (VAR x: ORG.Item);  (*to avoid forward reference*)
     Type: PROCEDURE (VAR type: ORB.Type);
     FormalType: PROCEDURE (VAR typ: ORB.Type; dim: INTEGER);
@@ -947,10 +949,21 @@ MODULE OP; (*N. Wirth 1.7.97 / 7.6.2014  Oberon compiler for RISC in Oberon-07*)
   END Module;
 
   PROCEDURE Option(VAR S: Texts.Scanner);
+     VAR i : INTEGER;
+	 ch : CHAR;
   BEGIN newSF := FALSE;
+    main := FALSE;
     IF S.nextCh = "/" THEN
       Texts.Scan(S); Texts.Scan(S);
-      IF (S.class = Texts.Name) & (S.s[0] = "s") THEN newSF := TRUE END
+         IF (S.class = Texts.Name) THEN
+		    i := 0;
+			REPEAT
+			   IF S.s[i] = "s" THEN newSF := TRUE END;
+			   IF S.s[i] = "m" THEN main := TRUE END;
+			   ch := S.s[i];
+			   INC(i);
+			UNTIL ch = 0X;
+		 END
     END
   END Option;
 
@@ -987,7 +1000,7 @@ MODULE OP; (*N. Wirth 1.7.97 / 7.6.2014  Oberon compiler for RISC in Oberon-07*)
     Oberon.Collect(0)
   END Compile;
 
-BEGIN Texts.OpenWriter(W); Texts.WriteString(W, "OR Compiler  7.6.2014");
+BEGIN Texts.OpenWriter(W); Texts.WriteString(W, "Vishap Oberon-07 Compiler  [2015/09/28]");
   Texts.WriteLn(W); Texts.Append(Oberon.Log, W.buf);
   Oberon.DumpLog; (* voc adaptation; -- noch *)
   NEW(dummy); dummy.class := ORB.Var; dummy.type := ORB.intType;

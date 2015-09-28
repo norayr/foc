@@ -10,6 +10,7 @@ all:
 	$(VOC0) -s CompatFiles.Mod \
 	        Fonts.Mod CompatTexts.Mod Oberon.Mod \
 	        OS.Mod OB.Mod OG.Mod OP.Mod -M
+	$(VOC0) vo7c.Mod -M
 
 test:
 	./OP -s test.Mod
