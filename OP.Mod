@@ -1,6 +1,6 @@
 MODULE OP; (*N. Wirth 1.7.97 / 7.6.2014  Oberon compiler for RISC in Oberon-07*)
            (* N. Chilingarian 2015, GNU+Linux/x86 port*)
-  IMPORT Texts := CompatTexts, Oberon, ORS := OS, ORB := OB, ORG := OG;
+  IMPORT Texts := CompatTexts, Oberon, ORS := OS, ORB := OB, ORG := OGx86;
   (*Author: Niklaus Wirth, 2014.
     Parser of Oberon-RISC compiler. Uses Scanner ORS to obtain symbols (tokens),
     ORB for definition of data structures and for handling import and export, and

@@ -1,4 +1,5 @@
 MODULE OG; (* NW  24.6.2014  code generator in Oberon-07 for RISC*)
+           (* noch 2015 code generator for x86 *)
   IMPORT SYSTEM, Files := CompatFiles, ORS := OS, ORB := OB;
   (*Code generator for Oberon compiler for RISC processor.
      Procedural interface to Parser OSAP; result in array "code".
