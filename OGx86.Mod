@@ -23,6 +23,32 @@ MODULE OG; (* NW  24.6.2014  code generator in Oberon-07 for RISC*)
     BR = 0; BLR = 1; BC = 2; BL = 3;
     MI = 0; PL = 8; EQ = 1; NE = 9; LT = 5; GE = 13; LE = 6; GT = 14;
 
+    EAX = 0; EBX = 1 ; ECX = 2; EDX = 3; ESI = 4; EDI = 5; EBP = 6; ESP = 7; EIP = 8; EFLAGS = 9;
+    
+    r0 = '%eax';
+	r1 = '%ebx';
+	r2 = '%ecx';
+	r3 = '%edx';
+	r4 = '%esi';
+	r5 = '%edi';
+	r6 = '%ebp';
+	r7 = '%esp';
+	r8 = '%eip';
+	r9 = '%eflags';
+	(* 8 bit registers *)
+
+	rr0 = '%al';
+	rr1 = '%bl';
+	rr2 = '%cl';
+	rr3 = '%dl';
+
+	MaxRegs = ESI(*EBP*);
+	
+	(*dedicated registers*)
+	FP* = EBP (*12*);  SP = ESP  (*13*); LNK = EIP (*14*); PC = 15;  (*means memory*) (* fp is ebp, sp is esp, lnk is eip*)
+
+	WRegLim* = FP-2;  (*minimum of 2 work registers in leaf procedures*)
+
     TYPE Item* = RECORD
       mode*: INTEGER;
       type*: ORB.Type;
@@ -63,7 +89,43 @@ MODULE OG; (* NW  24.6.2014  code generator in Oberon-07 for RISC*)
      RETURN ASH(x, n);
    END LSL;
 
+  (*------debug------------*)
+  PROCEDURE debug (VAR x : Item);
+  BEGIN
+  Out.String ("x.mode="); Out.Int(x.mode,0); Out.Ln;
+  Out.String ("x.r="); Out.Int (x.r,0); Out.Ln;
+  Out.String ("x.a="); Out.Int (x.a,0); Out.Ln;
+  Out.String ("x.b="); Out.Int (x.b,0); Out.Ln;
+  Out.String ("x.label="); Out.String (x.label); Out.Ln;
+  Out.String ("x.ilabel="); Out.String (x.ilabel); Out.Ln;
+  END debug;
 
+  PROCEDURE debugitem (VAR x : Item);
+  BEGIN
+  (*Write ("// x.mode="); Writeint(x.mode); Writeln ('');
+  Write ("// x.r="); Writeint (x.r); Writeln ('');
+  Write ("// x.a="); Writeint (x.a); Writeln ('');
+  Write ("// x.b="); Writeint (x.b); Writeln ('');
+  Write ("// x.label="); Writeln (x.label);
+  Write ("// x.ilabel="); Writeln (x.ilabel);*)
+  END debugitem;
+
+  PROCEDURE DebugObj( VAR obj : OB.Object);
+  BEGIN
+  (*Out.String ("obj.name = "); Out.String (obj.name); Out.Ln;
+  Out.String ("obj.class = "); Out.Int (obj.class, 0); Out.Ln;
+  Out.String ("obj.level = "); Out.Int (obj.lev, 0); Out.Ln;
+  Out.String ("obj.label = "); Out.String (obj.label); Out.Ln;
+  Out.String ("obj.ilabel = "); Out.String (obj.ilabel); Out.Ln;
+  Out.String ("obj.val = "); Out.Int (obj.val, 0); Out.Ln;
+  Out.Ln;
+  Out.String ("obj.class = "); Out.Int (obj.class, 0); Out.Ln;
+  Out.String ("obj.type.form = "); Out.Int(obj.type.form, 0); Out.Ln;
+  Out.String ("obj.type.nofpar = "); Out.Int (obj.type.nofpar, 0); Out.Ln;
+  Out.String ("obj.type.len = "); Out.Int (obj.type.len, 0); Out.Ln;
+  Out.String ("obj.type.size = "); Out.Int (obj.type.size, 0); Out.Ln;
+  *)
+  END DebugObj;
   (*instruction assemblers according to formats*)
 
   PROCEDURE Put0(op, a, b, c: LONGINT);
